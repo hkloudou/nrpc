@@ -8,19 +8,24 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-func New[T1 any, T2 any](conn *nats.Conn) *Service[T1, T2] {
-	return &Service[T1, T2]{
+func New[T1 any, T2 any](conn *nats.Conn) *Servicer[T1, T2] {
+	return &Servicer[T1, T2]{
 		conn:             conn,
-		requestValidator: func(in *T1) error { return nil },
+		requestValidator: func(req *Request[T1]) error { return nil },
 	}
 }
 
-type Service[T1 any, T2 any] struct {
-	conn             *nats.Conn
-	requestValidator func(in *T1) error
+type Response[T any] struct {
+	Raw  *nats.Msg
+	Data *T
 }
 
-func (m *Service[T1, T2]) Handle(msg *nats.Msg, cb func(in *T1) (*T2, error)) (ret *nats.Msg, err error) {
+type Servicer[T1 any, T2 any] struct {
+	conn             *nats.Conn
+	requestValidator func(in *Request[T1]) error
+}
+
+func (m *Servicer[T1, T2]) Handle(msg *nats.Msg, cb func(in *Request[T1]) (*T2, error)) (ret *nats.Msg, err error) {
 	defer func() {
 		if err2 := recover(); err2 != nil {
 			err = fmt.Errorf("panic:[%v]", err2)
@@ -30,9 +35,15 @@ func (m *Service[T1, T2]) Handle(msg *nats.Msg, cb func(in *T1) (*T2, error)) (r
 			log.Printf("\x1b[33mpanic stack info %s\n\x1b[0m", stackInfo)
 		}
 	}()
-	if req, err := decode[T1](msg); err != nil {
+	tmp, err := decode[T1](msg)
+	if err != nil {
 		return nil, fmt.Errorf("decode:[%v]", err)
-	} else if err := m.requestValidator(req); err != nil {
+	}
+	req := &Request[T1]{
+		Raw:  msg,
+		Data: tmp,
+	}
+	if err := m.requestValidator(req); err != nil {
 		return nil, err
 	} else if res, err := cb(req); err != nil {
 		return nil, err
@@ -41,12 +52,12 @@ func (m *Service[T1, T2]) Handle(msg *nats.Msg, cb func(in *T1) (*T2, error)) (r
 	}
 }
 
-func (m *Service[T1, T2]) Validator(fc func(in *T1) error) *Service[T1, T2] {
+func (m *Servicer[T1, T2]) Validator(fc func(in *Request[T1]) error) *Servicer[T1, T2] {
 	m.requestValidator = fc
 	return m
 }
 
-func (m *Service[T1, T2]) Queue(subj string, queue string, cb func(in *T1) (*T2, error)) (*nats.Subscription, error) {
+func (m *Servicer[T1, T2]) Queue(subj string, queue string, cb func(in *Request[T1]) (*T2, error)) (*nats.Subscription, error) {
 	return m.conn.QueueSubscribe(subj, queue, func(msg *nats.Msg) {
 		res, err := m.Handle(msg, cb)
 		if err != nil {
@@ -56,7 +67,7 @@ func (m *Service[T1, T2]) Queue(subj string, queue string, cb func(in *T1) (*T2,
 	})
 }
 
-func (m *Service[T1, T2]) Sub(subj string, cb func(in *T1) (*T2, error)) (*nats.Subscription, error) {
+func (m *Servicer[T1, T2]) Sub(subj string, cb func(in *Request[T1]) (*T2, error)) (*nats.Subscription, error) {
 	return m.conn.Subscribe(subj, func(msg *nats.Msg) {
 		if res, err := m.Handle(msg, cb); err != nil {
 			log.Println("handle", err)
