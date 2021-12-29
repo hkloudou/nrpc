@@ -21,3 +21,7 @@ var (
 	// NewEncoder is exported by gin/json package.
 	NewEncoder = json.NewEncoder
 )
+
+func init() {
+	log.Println("use goccy/go-json")
+}

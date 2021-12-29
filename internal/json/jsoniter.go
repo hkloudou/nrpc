@@ -7,7 +7,11 @@
 
 package json
 
-import jsoniter "github.com/json-iterator/go"
+import (
+	"log"
+
+	jsoniter "github.com/json-iterator/go"
+)
 
 var (
 	json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -22,3 +26,7 @@ var (
 	// NewEncoder is exported by gin/json package.
 	NewEncoder = json.NewEncoder
 )
+
+func init() {
+	log.Println("use json-iterator/go")
+}
