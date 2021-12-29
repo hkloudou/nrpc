@@ -20,8 +20,9 @@ type Request[T1 any, T2 any] struct {
 	responseValidator func(obj *T2) error
 }
 
-func (m *Request[T1, T2]) Validator(fc func(obj *T2) error) {
+func (m *Request[T1, T2]) Validator(fc func(obj *T2) error) *Request[T1, T2] {
 	m.responseValidator = fc
+	return m
 }
 
 func (m *Request[T1, T2]) Request(in *T1, timeout time.Duration) (*T2, error) {

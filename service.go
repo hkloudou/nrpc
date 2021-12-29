@@ -41,8 +41,9 @@ func (m *Service[T1, T2]) Handle(msg *nats.Msg, cb func(req *T1) (*T2, error)) (
 	}
 }
 
-func (m *Service[T1, T2]) Validator(fc func(obj *T1) error) {
+func (m *Service[T1, T2]) Validator(fc func(obj *T1) error) *Service[T1, T2] {
 	m.requestValidator = fc
+	return m
 }
 
 func (m *Service[T1, T2]) Queue(subj string, queue string, cb func(req *T1) (*T2, error)) (*nats.Subscription, error) {
