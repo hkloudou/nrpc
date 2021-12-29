@@ -20,7 +20,7 @@ type service[T1 any, T2 any] struct {
 	requestValidator func(obj *T1) error
 }
 
-func (m *service[T1, T2]) handle(msg *nats.Msg, cb func(req *T1) (*T2, error)) (ret *nats.Msg, err error) {
+func (m *service[T1, T2]) Handle(msg *nats.Msg, cb func(req *T1) (*T2, error)) (ret *nats.Msg, err error) {
 	defer func() {
 		if err2 := recover(); err2 != nil {
 			err = fmt.Errorf("panic:[%v]", err2)
@@ -47,7 +47,7 @@ func (m *service[T1, T2]) Validator(fc func(obj *T1) error) {
 
 func (m *service[T1, T2]) Queue(subj string, queue string, cb func(req *T1) (*T2, error)) (*nats.Subscription, error) {
 	return m.conn.QueueSubscribe(subj, queue, func(msg *nats.Msg) {
-		res, err := m.handle(msg, cb)
+		res, err := m.Handle(msg, cb)
 		if err != nil {
 			res = encodeError(err)
 		}
@@ -57,7 +57,7 @@ func (m *service[T1, T2]) Queue(subj string, queue string, cb func(req *T1) (*T2
 
 func (m *service[T1, T2]) Sub(subj string, cb func(req *T1) (*T2, error)) (*nats.Subscription, error) {
 	return m.conn.Subscribe(subj, func(msg *nats.Msg) {
-		if res, err := m.handle(msg, cb); err != nil {
+		if res, err := m.Handle(msg, cb); err != nil {
 			log.Println("handle", err)
 			msg.RespondMsg(encodeError(err))
 		} else {
