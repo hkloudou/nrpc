@@ -6,7 +6,7 @@ go get github.com/hkloudou/nrpc
 
 ## sample
 ``` go
-conn, err := nats.Connect(nats.DefaultURL)
+conn, err := nrpc.Connect("")
 if err != nil {
     panic(err)
 }
