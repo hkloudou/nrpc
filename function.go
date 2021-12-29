@@ -1,10 +1,11 @@
 package nrpc
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"reflect"
+
+	json "github.com/hkloudou/nrpc/internal/json"
 
 	"github.com/nats-io/nats.go"
 	"google.golang.org/protobuf/proto"
@@ -48,8 +49,7 @@ func encode[T any](obj *T) (*nats.Msg, error) {
 	}
 	var b []byte
 	var err = fmt.Errorf("not support")
-	mt :=
-		reflect.ValueOf(obj).MethodByName("ProtoReflect")
+	mt := reflect.ValueOf(obj).MethodByName("ProtoReflect")
 	if mt.IsValid() {
 		b, err = proto.Marshal(protoreflect.ValueOf(mt.Call(nil)[0].Interface()).Message().Interface())
 	} else {
