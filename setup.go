@@ -34,18 +34,13 @@ func DefaultConfig() []nats.Option {
 		nats.DisconnectErrHandler(func(nc *nats.Conn, err error) {
 			log.Println("Got disconnected! Reason: ", err)
 		}),
-		nats.MaxReconnects(60),
-		nats.ReconnectHandler(func(nc *nats.Conn) {
-			if nc.Reconnects > 58 {
-				panic("too much times")
-			}
-			log.Println("Got reconnected to", "[", nc.Reconnects, "]", nc.ConnectedUrl())
+		nats.MaxReconnects(10),
+		nats.ReconnectHandler(func(c *nats.Conn) {
+			log.Println("reconnected")
 		}),
 		nats.ClosedHandler(func(nc *nats.Conn) {
 			log.Println("Connection closed. Reason: ", nc.LastError())
-		}),
-		nats.DiscoveredServersHandler(func(nc *nats.Conn) {
-			log.Println("Discover closed. Reason: ", nc.ConnectedAddr(), nc.ConnectedUrl())
+			panic("restart")
 		}),
 		nats.CustomReconnectDelay(func(attempts int) time.Duration {
 			return time.Second * 1
