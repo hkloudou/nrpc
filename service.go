@@ -8,6 +8,8 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
+const pre = "_NRPC."
+
 func New[T1 any, T2 any](conn *nats.Conn) *Servicer[T1, T2] {
 	return &Servicer[T1, T2]{
 		conn:             conn,
@@ -26,6 +28,9 @@ type Servicer[T1 any, T2 any] struct {
 }
 
 func (m *Servicer[T1, T2]) Handle(msg *nats.Msg, cb func(in *Request[T1]) (*T2, error)) (ret *nats.Msg, err error) {
+	con, _ := m.conn.JetStream()
+	con.AddStream(&nats.StreamConfig{})
+
 	defer func() {
 		if err2 := recover(); err2 != nil {
 			err = fmt.Errorf("panic:[%v]", err2)
@@ -58,7 +63,7 @@ func (m *Servicer[T1, T2]) Validator(fc func(in *Request[T1]) error) *Servicer[T
 }
 
 func (m *Servicer[T1, T2]) Queue(subj string, queue string, cb func(in *Request[T1]) (*T2, error)) (*nats.Subscription, error) {
-	return m.conn.QueueSubscribe(subj, queue, func(msg *nats.Msg) {
+	return m.conn.QueueSubscribe(fmt.Sprintf("%s%s", pre, subj), queue, func(msg *nats.Msg) {
 		res, err := m.Handle(msg, cb)
 		if err != nil {
 			res = encodeError(err)
@@ -68,7 +73,7 @@ func (m *Servicer[T1, T2]) Queue(subj string, queue string, cb func(in *Request[
 }
 
 func (m *Servicer[T1, T2]) Sub(subj string, cb func(in *Request[T1]) (*T2, error)) (*nats.Subscription, error) {
-	return m.conn.Subscribe(subj, func(msg *nats.Msg) {
+	return m.conn.Subscribe(fmt.Sprintf("%s%s", pre, subj), func(msg *nats.Msg) {
 		if res, err := m.Handle(msg, cb); err != nil {
 			log.Println("handle", err)
 			msg.RespondMsg(encodeError(err))

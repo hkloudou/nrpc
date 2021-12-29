@@ -1,6 +1,7 @@
 package nrpc
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/nats-io/nats.go"
@@ -35,7 +36,7 @@ func (m *Requester[T1, T2]) Request(in *T1, timeout time.Duration) (*Response[T2
 	if err != nil {
 		return nil, err
 	}
-	mr.Subject = m.topic
+	mr.Subject = fmt.Sprintf("%s%s", pre, m.topic)
 	res, err := m.conn.RequestMsg(mr, timeout)
 	if err != nil {
 		return nil, err
