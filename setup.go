@@ -47,3 +47,14 @@ func DefaultConfig() []nats.Option {
 		}),
 	}
 }
+
+func DefaultConfigWithTls(ca, clientCert, clientKey string) []nats.Option {
+	return append(DefaultConfig(), WithTls(ca, clientCert, clientKey)...)
+}
+
+func WithTls(ca, clientCert, clientKey string) []nats.Option {
+	return []nats.Option{
+		nats.RootCAs(ca),
+		nats.ClientCert(clientCert, clientKey),
+	}
+}
