@@ -6,25 +6,25 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-func NewRequest[T1 any, T2 any](conn *nats.Conn, topic string) *request[T1, T2] {
-	return &request[T1, T2]{
+func NewRequest[T1 any, T2 any](conn *nats.Conn, topic string) *Request[T1, T2] {
+	return &Request[T1, T2]{
 		conn:              conn,
 		topic:             topic,
 		responseValidator: func(obj *T2) error { return nil },
 	}
 }
 
-type request[T1 any, T2 any] struct {
+type Request[T1 any, T2 any] struct {
 	conn              *nats.Conn
 	topic             string
 	responseValidator func(obj *T2) error
 }
 
-func (m *request[T1, T2]) Validator(fc func(obj *T2) error) {
+func (m *Request[T1, T2]) Validator(fc func(obj *T2) error) {
 	m.responseValidator = fc
 }
 
-func (m *request[T1, T2]) Request(in *T1, timeout time.Duration) (*T2, error) {
+func (m *Request[T1, T2]) Request(in *T1, timeout time.Duration) (*T2, error) {
 	mr, err := encode(in)
 	if err != nil {
 		return nil, err
