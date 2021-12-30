@@ -58,3 +58,7 @@ func WithTls(ca, clientCert, clientKey string) []nats.Option {
 		nats.ClientCert(clientCert, clientKey),
 	}
 }
+
+func WithName(name string) nats.Option {
+	return nats.Name(name)
+}
