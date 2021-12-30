@@ -62,3 +62,7 @@ func WithTls(ca, clientCert, clientKey string) []nats.Option {
 func WithName(name string) nats.Option {
 	return nats.Name(name)
 }
+
+func WithNKey(pubkey string, fc nats.SignatureHandler) nats.Option {
+	return nats.Nkey(pubkey, fc)
+}
