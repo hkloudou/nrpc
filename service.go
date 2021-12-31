@@ -33,7 +33,7 @@ func (m *Servicer[T1, T2]) Handle(msg *nats.Msg, cb func(in *Request[T1]) (*T2, 
 
 	defer func() {
 		if err2 := recover(); err2 != nil {
-			err = fmt.Errorf("panic:[%v]", err2)
+			err = fmt.Errorf("nats: panic[%v]", err2)
 			buf := make([]byte, 2048)
 			n := runtime.Stack(buf, false)
 			stackInfo := fmt.Sprintf("%s", buf[:n])
