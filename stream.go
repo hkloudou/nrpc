@@ -8,22 +8,22 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-type Stream[Tr any] struct {
+type Stream struct {
 	js nats.JetStreamContext
 	// topic             string
 	// requestValidator  func(in *Request[T1]) error
 	// responseValidator func(out *Response[T2]) error
 }
 
-func NewStream[T any](conn *nats.Conn, opts ...nats.JSOpt) (*Stream[T], error) {
+func NewStream[T any](conn *nats.Conn, opts ...nats.JSOpt) (*Stream, error) {
 	js, err := conn.JetStream(conn, opts)
 	if err != nil {
 		return nil, err
 	}
-	return &Stream[T]{js: js}, nil
+	return &Stream{js: js}, nil
 }
 
-func (m *Stream[T]) Config(cfg *nats.StreamConfig) error {
+func (m *Stream) Config(cfg *nats.StreamConfig) error {
 	if m.js == nil {
 		return errors.New("please InitNats")
 	}
@@ -47,6 +47,6 @@ func (m *Stream[T]) Config(cfg *nats.StreamConfig) error {
 	return nil
 }
 
-func (m *Stream[T]) Js() nats.JetStreamContext {
+func (m *Stream) Js() nats.JetStreamContext {
 	return m.js
 }
