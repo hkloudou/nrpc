@@ -16,7 +16,7 @@ type Stream struct {
 }
 
 func NewStream(conn *nats.Conn, opts ...nats.JSOpt) (*Stream, error) {
-	js, err := conn.JetStream(conn, opts)
+	js, err := conn.JetStream(opts)
 	if err != nil {
 		return nil, err
 	}
