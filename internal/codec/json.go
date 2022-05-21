@@ -1,10 +1,8 @@
-package face
+package codec
 
-import "encoding/json"
-
-// import (
-// 	json "github.com/hkloudou/nrpc/face/internal/json"
-// )
+import (
+	json "github.com/hkloudou/nrpc/internal/json"
+)
 
 type jsonCodec struct {
 }

@@ -1,4 +1,4 @@
-package face
+package codec
 
 type Codec interface {
 	Check(val interface{}) bool

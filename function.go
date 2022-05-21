@@ -4,12 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	// json "github.com/hkloudou/nrpc/internal/json"
-
-	"github.com/hkloudou/nrpc/face"
+	"github.com/hkloudou/nrpc/internal/codec"
 	"github.com/nats-io/nats.go"
-	// "google.golang.org/protobuf/proto"
-	// "google.golang.org/protobuf/reflect/protoreflect"
 )
 
 func PointerOf[T any](v T) *T {
@@ -25,7 +21,7 @@ func decode[T any](msg *nats.Msg) (*T, error) {
 	if len(headErr) != 0 {
 		return nil, errors.New(headErr)
 	}
-	code := face.GetCodec(&data)
+	code := codec.GetCodec(&data)
 	if err := code.Unmarshal(msg.Data, &data); err != nil {
 		return nil, err
 	}
@@ -43,7 +39,7 @@ func encode[T any](obj *T) (*nats.Msg, error) {
 	var b []byte
 	var err = fmt.Errorf("not support")
 
-	b, err = face.GetCodec(obj).Marshal(obj)
+	b, err = codec.GetCodec(obj).Marshal(obj)
 	if err != nil {
 		return nil, err
 	}
