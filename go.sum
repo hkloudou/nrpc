@@ -1,7 +1,15 @@
 github.com/goccy/go-json v0.9.5 h1:ooSMW526ZjK+EaL5elrSyN2EzIfi/3V0m4+HJEDYLik=
 github.com/goccy/go-json v0.9.5/go.mod h1:6MelG93GURQebXPDq3khkgXZkazVtN9CRI+MGFi0w8I=
+github.com/goccy/go-json v0.9.7 h1:IcB+Aqpx/iMHu5Yooh7jEzJk1JZ7Pjtmys2ukPr7EeM=
+github.com/goccy/go-json v0.9.7/go.mod h1:6MelG93GURQebXPDq3khkgXZkazVtN9CRI+MGFi0w8I=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+github.com/hkloudou/nrpc/face v1.0.1 h1:a46ZkkbwnJje6pbEMHDAZr97OSH+yXbXdUkd+XKmOjE=
+github.com/hkloudou/nrpc/face v1.0.1/go.mod h1:wEUQuvECbDrH0+LIusjo5L11XkmayN9LcSFroHQXlFI=
+github.com/hkloudou/nrpc/face v1.0.2 h1:8JHgd0Alu5MJ2K3qbEkH2SYf9N4njv1Sc3xEJP/pGIE=
+github.com/hkloudou/nrpc/face v1.0.2/go.mod h1:wEUQuvECbDrH0+LIusjo5L11XkmayN9LcSFroHQXlFI=
+github.com/hkloudou/nrpc/face v1.0.3 h1:zRdkucddVlSd55f29JiigPDvJA8YD4+M1kQrge7JXUI=
+github.com/hkloudou/nrpc/face v1.0.3/go.mod h1:V1vlJjLLZoNBmiGIHGRBWVcW9Ouzh+aHt6iuRoXcRT0=
 github.com/nats-io/nats.go v1.13.0 h1:LvYqRB5epIzZWQp6lmeltOOZNLqCvm4b+qfvzZO03HE=
 github.com/nats-io/nats.go v1.13.0/go.mod h1:BPko4oXsySz4aSWeFgOHLZs3G4Jq4ZAyE6/zMCxRT6w=
 github.com/nats-io/nkeys v0.3.0 h1:cgM5tL53EvYRU+2YLXIK0G2mJtK12Ft9oeooSZMA2G8=
